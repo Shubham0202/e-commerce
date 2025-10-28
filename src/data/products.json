@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1",
+    "name": "Smartphone X",
+    "slug": "smartphone-x",
+    "description": "High-end smartphone with great camera.",
+    "price": 49999,
+    "category": "Electronics",
+    "inventory": 10,
+    "lastUpdated": "2025-10-27T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Wireless Earbuds",
+    "slug": "wireless-earbuds",
+    "description": "Noise-cancelling wireless earbuds.",
+    "price": 2999,
+    "category": "Accessories",
+    "inventory": 3,
+    "lastUpdated": "2025-10-27T10:00:00Z"
+  }
+]
