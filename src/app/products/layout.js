@@ -1,3 +1,4 @@
+// src/app/layout.js
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
