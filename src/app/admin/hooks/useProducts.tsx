@@ -1,4 +1,3 @@
-// src/app/admin/hooks/useProducts.tsx
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -30,10 +29,12 @@ export default function useProducts(initial: Product[] = []) {
     try {
       if (opts?.showSkeleton) setIsRefreshing(true);
 
+      // ✅ Use relative path, not absolute URL
       const res = await fetch("/api/products", {
         signal: ctrl.signal,
         cache: "no-store",
       });
+      
       if (!res.ok) throw new Error("Failed to load products");
 
       const data = await res.json();
@@ -45,9 +46,7 @@ export default function useProducts(initial: Product[] = []) {
         console.error("fetchProducts error:", err);
       }
     } finally {
-      // Keep skeleton visible for a minimal time to avoid flicker
       if (opts?.showSkeleton) {
-        // ensure at least 400ms of skeleton for smoothness
         await new Promise((r) => setTimeout(r, 400));
         setIsRefreshing(false);
       }

@@ -1,32 +1,13 @@
-// src/app/admin/page.tsx
 import AdminSidebar from "./components/AdminSidebar";
 import AdminHeader from "./components/AdminHeader";
 import StatsCards from "./components/StatsCards";
 import ProductsTable from "./components/ProductsTable";
 import { ProductsProvider } from "@/context/ProductsContext";
-
-type Product = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  price: number;
-  category: string;
-  inventory: number;
-  lastUpdated: string;
-};
-
-async function fetchProducts(): Promise<Product[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/api/products`,
-    { cache: "no-store" }
-  );
-  if (!res.ok) return [];
-  return res.json();
-}
+import { readProducts } from "@/lib/products"; // ✅ Direct import, no API call
 
 export default async function AdminPage() {
-  const products = await fetchProducts();
+  // ✅ Direct data access instead of API call
+  const products = await readProducts();
 
   return (
     <div className="flex w-full">
@@ -46,7 +27,6 @@ export default async function AdminPage() {
         {/* ✅ Wrap everything inside ProductsProvider */}
         <ProductsProvider initialProducts={products}>
           <main className="max-w-7xl mx-auto px-6 py-6">
-            
             {/* ✅ StatsCards now auto-updates because it reads from context */}
             <StatsCards />
 
