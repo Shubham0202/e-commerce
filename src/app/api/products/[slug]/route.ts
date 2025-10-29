@@ -1,14 +1,12 @@
+// src/app/api/products/[slug]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { readProducts } from "@/lib/products";
-
-export const dynamic = "force-static";
 
 export async function GET(
   _req: NextRequest,
   context: { params: { slug: string } }
 ) {
   const { slug } = context.params;
-
   const products = await readProducts();
   const product = products.find((p) => p.slug === slug);
 
