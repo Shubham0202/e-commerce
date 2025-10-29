@@ -1,26 +1,23 @@
 // src/app/products/[slug]/page.tsx
 import ProductCard from "@/components/ProductCard";
 import { notFound } from "next/navigation";
+import { readProducts } from "@/lib/products";
+
 export const revalidate = 60; // ✅ ISR enabled
 
-// ✅ Pre-render all product pages
+// ✅ Pre-render all product pages using direct data access
 export async function generateStaticParams() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`);
-  const products = await res.json();
+  const products = await readProducts(); // Direct access, no API call
 
-  return products.map((p: any) => ({
-    slug: p.slug,
+  return products.map((product) => ({
+    slug: product.slug,
   }));
 }
 
+// ✅ Direct data access instead of API call
 async function getProduct(slug: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/products/${slug}`,
-    { next: { revalidate: 60 } }
-  );
-
-  if (!res.ok) return null;
-  return res.json();
+  const products = await readProducts();
+  return products.find((p) => p.slug === slug) || null;
 }
 
 export default async function ProductPage({
@@ -36,7 +33,7 @@ export default async function ProductPage({
 
   return (
     <div className="p-6">
-   <ProductCard product={product} />
+      <ProductCard product={product} />
     </div>
   );
 }
