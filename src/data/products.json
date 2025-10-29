@@ -20,16 +20,6 @@
     "lastUpdated": "2025-10-27T10:00:00Z"
   },
   {
-    "id": "20e8b356-c5ab-4245-880f-d167ff3a4412",
-    "name": "test",
-    "slug": "test",
-    "description": "",
-    "price": 12,
-    "category": "Electronics",
-    "inventory": 0,
-    "lastUpdated": "2025-10-29T08:55:39.355Z"
-  },
-  {
     "id": "c79db076-ec86-4ed1-8b9e-d269ece84424",
     "name": "test2",
     "slug": "test2",
@@ -48,5 +38,15 @@
     "category": "Electronics",
     "inventory": 3,
     "lastUpdated": "2025-10-29T08:59:05.081Z"
+  },
+  {
+    "id": "7bb8a5e2-8e59-4d9a-9ff6-29a94c840e9f",
+    "name": "asas",
+    "slug": "asas",
+    "description": "",
+    "price": 0,
+    "category": "Electronics",
+    "inventory": 0,
+    "lastUpdated": "2025-10-29T13:45:06.735Z"
   }
 ]

@@ -1,10 +1,10 @@
 export const dynamic = "force-static";
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { readProducts } from "@/lib/products";
 
 export async function GET(
-  _req: Request,
+  _req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   const products = await readProducts();
