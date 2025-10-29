@@ -1,14 +1,16 @@
-export const dynamic = "force-static";
-
 import { NextRequest, NextResponse } from "next/server";
 import { readProducts } from "@/lib/products";
 
+export const dynamic = "force-static";
+
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { slug: string } }
+  context: { params: { slug: string } }
 ) {
+  const { slug } = context.params;
+
   const products = await readProducts();
-  const product = products.find((p) => p.slug === params.slug);
+  const product = products.find((p) => p.slug === slug);
 
   if (!product) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
