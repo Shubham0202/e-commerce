@@ -18,5 +18,35 @@
     "category": "Accessories",
     "inventory": 3,
     "lastUpdated": "2025-10-27T10:00:00Z"
+  },
+  {
+    "id": "20e8b356-c5ab-4245-880f-d167ff3a4412",
+    "name": "test",
+    "slug": "test",
+    "description": "",
+    "price": 12,
+    "category": "Electronics",
+    "inventory": 0,
+    "lastUpdated": "2025-10-29T08:55:39.355Z"
+  },
+  {
+    "id": "c79db076-ec86-4ed1-8b9e-d269ece84424",
+    "name": "test2",
+    "slug": "test2",
+    "description": "",
+    "price": 125,
+    "category": "Electronics",
+    "inventory": 100,
+    "lastUpdated": "2025-10-29T08:58:18.385Z"
+  },
+  {
+    "id": "739e40ce-5bbc-445f-b013-5f24118e371a",
+    "name": "abcd",
+    "slug": "abcd",
+    "description": "",
+    "price": 115,
+    "category": "Electronics",
+    "inventory": 3,
+    "lastUpdated": "2025-10-29T08:59:05.081Z"
   }
 ]
