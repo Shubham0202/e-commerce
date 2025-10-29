@@ -5,9 +5,9 @@ export const dynamic = "force-static";
 
 export async function GET(
   _req: NextRequest,
-  context: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = context.params;
+  const { slug } = await context.params; // ⬅️ Must await params here!
 
   const products = await readProducts();
   const product = products.find((p) => p.slug === slug);
