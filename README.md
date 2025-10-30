@@ -74,8 +74,6 @@ Inventory Manager Pro provides a lightweight e-commerce UI for customers and a p
 * **Node.js**
 * **MongoDB + Mongoose** (Database)
 
-> JSON removed — MongoDB now used for data storage.
-
 ---
 
 ## 🧱 Architecture & Rendering Strategy
