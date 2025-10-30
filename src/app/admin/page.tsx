@@ -5,6 +5,7 @@ import StatsCards from "./components/StatsCards";
 import ProductsTable from "./components/ProductsTable";
 import { ProductsProvider } from "@/context/ProductsContext";
 import { getProducts, type ProductType } from "@/lib/products";
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Convert MongoDB documents to plain objects
 function serializeProducts(products: ProductType[]) {
@@ -44,6 +45,7 @@ export default async function AdminPage() {
         </header>
 
         {/* ✅ Wrap everything inside ProductsProvider */}
+        <ErrorBoundary>
         <ProductsProvider initialProducts={serializedProducts}>
           <main className="max-w-7xl mx-auto px-6 py-6">
             {/* ✅ StatsCards now auto-updates because it reads from context */}
@@ -55,6 +57,7 @@ export default async function AdminPage() {
             </div>
           </main>
         </ProductsProvider>
+        </ErrorBoundary>
       </div>
     </div>
   );

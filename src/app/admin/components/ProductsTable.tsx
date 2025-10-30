@@ -166,10 +166,20 @@ async function handleDeleteConfirm() {
 // quick manual refresh
 async function handleRefresh() {
   try {
-    await refreshProducts();
-    toast.success("Refreshed");
+    setIsSyncing(true);
+    // Use relative path instead of absolute
+    const response = await fetch('/api/products');
+    if (response.ok) {
+      const freshProducts = await response.json();
+      setProducts(freshProducts);
+      toast.success("Refreshed");
+    } else {
+      throw new Error('Failed to refresh');
+    }
   } catch (err) {
     toast.error("Refresh failed");
+  } finally {
+    setIsSyncing(false);
   }
 }
   // UI handlers

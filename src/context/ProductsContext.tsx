@@ -40,30 +40,33 @@ export function ProductsProvider({
     }
   };
 
-  const addProduct = async (productData: Omit<ProductType, '_id' | 'createdAt' | 'updatedAt'>) => {
-    setIsSyncing(true);
-    try {
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-key': 'secret-key' // Replace with your actual admin key
-        },
-        body: JSON.stringify(productData)
-      });
+// In your ProductsContext.tsx
+const addProduct = async (productData: Omit<ProductType, '_id' | 'createdAt' | 'updatedAt'>) => {
+  setIsSyncing(true);
+  try {
+    const response = await fetch('/api/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || 'secret-key'
+      },
+      body: JSON.stringify(productData)
+    });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to add product');
-      }
-
-      const newProduct = await response.json();
-      setProducts(prev => [...prev, newProduct]);
-    } finally {
-      setIsSyncing(false);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to add product');
     }
-  };
 
+    const newProduct = await response.json();
+    setProducts(prev => [...prev, newProduct]);
+  } catch (error: any) {
+    console.error('Add product error:', error);
+    throw error; // Re-throw to handle in component
+  } finally {
+    setIsSyncing(false);
+  }
+};
   const updateProduct = async (slug: string, productData: Partial<ProductType>) => {
     setIsSyncing(true);
     try {
