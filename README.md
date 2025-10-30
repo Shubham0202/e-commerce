@@ -1,6 +1,5 @@
 # Inventory Manager Pro
 
-*(Updated README — polished formatting, improved clarity, added missing sections)*
 
 **Inventory Manager Pro** is a modern, enterprise-ready e-commerce and inventory management application built with Next.js (App Router) and TypeScript. It demonstrates a complete full‑stack workflow suitable for portfolios, interviews, and practical assignments.
 
