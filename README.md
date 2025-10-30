@@ -1,113 +1,149 @@
-
 # Inventory Manager Pro
 
-**Inventory Manager Pro** is a modern, enterprise-ready e-commerce and inventory management application built with Next.js App Router and TypeScript. The project demonstrates a full-stack workflow suitable for portfolios and technical assessments, featuring an administrative dashboard for product CRUD, role-based authentication, client-side product search and filtering, ISR for product pages, and a responsive UI with dark mode.
+*(Updated README — polished formatting, improved clarity, added missing sections)*
+
+**Inventory Manager Pro** is a modern, enterprise-ready e-commerce and inventory management application built with Next.js (App Router) and TypeScript. It demonstrates a complete full‑stack workflow suitable for portfolios, interviews, and practical assignments.
+
+This project includes: an admin dashboard for product CRUD operations, role‑based authentication, product catalog with search & filters, static pages with ISR, protected routes, and a responsive UI with dark mode.
 
 ---
 
-## Table of contents
+## 📌 Table of Contents
 
-* Project overview
-* Key features
-* Technology stack
-* Architecture and rendering strategy
-* Folder structure
-* Installation and setup
-* Environment variables
-* Running the application
-* API endpoints
-* Authentication and authorization
-* Admin dashboard (capabilities)
-* Home page and product pages (SSG + ISR)
-* Notes on data storage (JSON)
-* Deployment guide
-* Testing suggestions
-* Future improvements and roadmap
-* Contribution guidelines
+* Project Overview
+* Key Features
+* Tech Stack
+* Architecture & Rendering Strategy
+* Folder Structure
+* Installation & Setup
+* Environment Variables
+* Running the Application
+* Demo Accounts
+* API Endpoints
+* Authentication & Authorization
+* Admin Dashboard
+* Home & Product Pages (SSG + ISR)
+* Data Storage
+* Deployment Guide
+* Testing Suggestions
+* Future Improvements & Roadmap
+* Contribution Guidelines
 * License
+* Screenshots & Demo
+* Troubleshooting
 * Contact
 
 ---
 
-## Project overview
+## 🧾 Project Overview
 
-Inventory Manager Pro provides a minimal e-commerce front-end for customers and a powerful administrative interface for product management. The application was designed to showcase modern Next.js features (App Router, server and client components, `layout.tsx`), SSR/SSG/ISR strategies, and practical UI/UX patterns for product catalogs and dashboards.
+Inventory Manager Pro provides a lightweight e-commerce UI for customers and a powerful admin interface for product management. It demonstrates modern Next.js concepts including App Router, Server & Client Components, Middleware, ISR, and reusable UI patterns.
 
-Intended uses:
+**Intended Uses:**
 
-* Portfolio project for developers
-* Assignment submission
-* Prototype for a lightweight e-commerce admin experience
-
----
-
-## Key features
-
-* Role-based authentication (admin / user) — demo credentials provided
-* Admin dashboard with product management (Create, Read, Update, Delete)
-* Server and client API routes for product CRUD operations
-* Home page listing with client-side search, filters and responsive product grid
-* Product detail pages pre-generated at build time (SSG) with ISR (revalidate on demand / periodic regeneration)
-* Stats cards in admin dashboard: total products, total inventory, low stock items
-* Dark mode support using `next-themes`
-* Lucide icons and Tailwind CSS based design system
-* Middleware to protect admin routes and redirect users by role
-* JSON-based data store (`src/data/products.json`) for simplicity (suitable for assignments)
-* Clean TypeScript typing and context-based state management for admin product list
+* Portfolio / Resume project for developers
+* College or technical assignment submission
+* Prototype for minimal e-commerce with admin panel
 
 ---
 
-## Technology stack
+## ✨ Key Features
 
-* Next.js (App Router)
-* React (Server & Client Components)
-* TypeScript
-* Tailwind CSS
-* next-themes (dark mode)
-* Lucide Icons
-* Node.js for server-side routes that access filesystem (admin APIs)
-* JSON files for mock data (`src/data/*.json`)
-* Local cookie-based session for demo auth
-
-Badges and dependencies in your repository should list the above stack; add them to your package manifest.
-
----
-
-## Architecture and rendering strategy
-
-The project uses a hybrid rendering approach:
-
-* **Home page (`/`)** — Static Site Generation at build time (SSG). Products are fetched during build; client-side filtering/search is applied.
-* **Product detail pages (`/products/[slug]`)** — Pre-generated at build-time (SSG) and periodically regenerated using Incremental Static Regeneration (ISR) or on-demand revalidation (revalidate path on update). This ensures static performance while keeping price/inventory reasonably fresh.
-* **Admin routes and API** — Server (Node runtime) when filesystem operations are required (read/write `products.json`). These API routes add `export const runtime = "nodejs";` when using Node-only modules like `fs`/`path`.
-* **Auth & middleware** — Edge-runtime compatible middleware is used for route protection and redirection logic. Authentication is session-cookie based for demo use.
+* 🔐 Role-based authentication (**Admin / User**) — demo credentials included
+* 🧑‍💼 Admin dashboard with full product management (Create, Read, Update, Delete)
+* 🧵 Server & client API routes for CRUD operations
+* 🏠 Home page product listing with client-side search and filtering
+* ⚡ Product detail pages: SSG + ISR for dynamic regeneration
+* 📊 Admin stats cards: Total products, total inventory, low stock items
+* 🌓 Dark mode with `next-themes`
+* 🎨 Tailwind CSS + Lucide Icons based UI
+* 🧩 Middleware for route protection
+* 📁 JSON-based data store (`/src/data/products.json`) — easy for assignment/demo
+* ✅ Clean TypeScript types and reusable components
 
 ---
 
-## Folder structure
+## 🧰 Technology Stack
 
-A recommended project layout:
+* **Next.js** (App Router)
+* **React** (Server & Client Components)
+* **TypeScript**
+* **Tailwind CSS**
+* **next-themes** (Dark mode)
+* **Lucide Icons**
+* **Node.js**
+* **MongoDB + Mongoose** (Database)
+
+> JSON removed — MongoDB now used for data storage.
+
+---
+
+## 🧱 Architecture & Rendering Strategy
+
+This project follows a **Hybrid Architecture** combining the strengths of Server Components, API routes, and a clean backend structure with MongoDB.
+
+### 🔹 Rendering Strategy
+
+| Section                            | Rendering                 | Notes                                                   |
+| ---------------------------------- | ------------------------- | ------------------------------------------------------- |
+| Home (`/`)                         | **SSG**                   | Build-time static; client filtering for instant results |
+| Product Pages (`/products/[slug]`) | **SSG + ISR**             | Pre-generated; revalidates periodically or on demand    |
+| Admin APIs                         | **Server (Node runtime)** | Interact with MongoDB using Mongoose                    |
+| Auth & Middleware                  | **Edge Compatible**       | Protects routes based on user role                      |
+
+### 🧩 Backend Architecture (Hybrid)
 
 ```
+UI Pages / Components
+        ↓
+API Routes (app/api/...)
+        ↓
+Lib Layer (Business Logic & Validation)
+        ↓
+Mongoose Models
+        ↓
+MongoDB Database
+```
+
+**Why Hybrid?**
+
+* Maintains simplicity (good for intermediate projects)
+* Clean separation of responsibilities
+* Scales better than direct DB calls from routes
+
+--------|------------|-------|
+| Home (`/`) | **SSG** | Build-time static; client filtering for instant results |
+| Product Pages (`/products/[slug]`) | **SSG + ISR** | Pre-generated; revalidates periodically or on demand |
+| Admin APIs | **Server (Node runtime)** | Uses `fs` to read/write JSON |
+| Auth & Middleware | **Edge Compatible** | Protects routes based on role |
+
+> Use `export const runtime = "nodejs"` in routes that use `fs`/`path`.
+
+---
+
+## 📂 Folder Structure
+
+```bash
 src/
 ├─ app/
 │  ├─ layout.tsx
-│  ├─ page.tsx              // Home page
-│  ├─ login/
-│  │  └─ page.tsx
+│  ├─ page.tsx                 # Home page
+│  ├─ login/page.tsx
+│  ├─ dashboard/page.tsx       # User landing page
 │  ├─ products/
-│  │  └─ [slug]/page.tsx    // Product detail
+│  │  └─ [slug]/page.tsx       # Product detail
 │  ├─ admin/
-│  │  ├─ page.tsx           // Admin dashboard (SSR/Client)
+│  │  ├─ page.tsx              # Admin dashboard
 │  │  └─ components/
 │  │     ├─ ProductsTable.tsx
 │  │     ├─ StatsCards.tsx
 │  │     └─ ...
 │  └─ api/
-│     ├─ products/route.ts          // public product list (Edge or Node)
-│     ├─ admin/
-│     │  └─ products/[id]/route.ts  // PUT/DELETE (Node runtime if uses fs)
-│     └─ login/route.ts             // POST login (Edge-compatible)
+│     ├─ products/route.ts            # Public products list
+│     ├─ products/[slug]/route.ts     # Single product
+│     ├─ admin/products/route.ts      # POST create product
+│     ├─ admin/products/[id]/route.ts # PUT/DELETE
+│     └─ login/route.ts               # POST login
 ├─ components/
 │  ├─ Header.tsx
 │  ├─ ProductCard.tsx
@@ -117,25 +153,23 @@ src/
 │  └─ products.ts
 ├─ data/
 │  ├─ products.json
-│  └─ users.json (optional)
+│  └─ users.json
 ├─ middleware.ts
-├─ public/
-│  └─ logo.png
-├─ styles/
-└─ ...
+└─ public/
+   └─ logo.png
 ```
 
 ---
 
-## Installation and setup
+## ⚙️ Installation & Setup
 
-Prerequisites:
+### Prerequisites
 
-* Node.js 18+ (LTS recommended)
-* npm (or yarn / pnpm)
-* Recommended editor: VSCode with TypeScript support
+* Node.js 18+
+* npm / yarn / pnpm
+* Recommended: VS Code
 
-Clone the repository and install dependencies:
+### Clone & Install
 
 ```bash
 git clone https://github.com/Shubham0202/e-commerce
@@ -145,33 +179,31 @@ npm install
 
 ---
 
-## Environment variables
+## 🔑 Environment Variables
 
-Create a `.env.local` file in the project root and set these variables (placeholders shown):
+Create a `.env.local` file:
 
-```
+```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NODE_ENV=development
-
-# For demo cookie/session: not required but recommended for production
 AUTH_COOKIE_SECRET=your-strong-secret-here
-
 ```
 
-* `AUTH_COOKIE_SECRET` is recommended if you use signed cookies for sessions. For the demo local cookie approach this may be optional.
+> Use a strong secret in production.
 
 ---
 
-## Running the application
+## 🚀 Running the Application
 
-Development:
+### Development
 
 ```bash
 npm run dev
-# opens http://localhost:3000
 ```
 
-Build:
+Visit: [http://localhost:3000](http://localhost:3000)
+
+### Build & Start
 
 ```bash
 npm run build
@@ -180,208 +212,171 @@ npm run start
 
 ---
 
-## Demo accounts (for testing)
+## 👥 Demo Accounts
 
-> These demo credentials are included for local testing. Change them or remove in production.
+> Change/remove in production.
 
-* Admin: `username: admin` / `password: admin123`
-* User: `username: user` / `password: user123`
+| Role  | Username | Password |
+| ----- | -------- | -------- |
+| Admin | admin    | admin123 |
+| User  | user     | user123  |
 
-Login at `/login`. Admin users are redirected to `/admin`. Regular users are redirected to `/dashboard`.
-
----
-
-## API Endpoints
-
-This project uses Next.js App Router API routes. The following endpoints are provided:
-
-### Public product endpoints
-
-* `GET /api/products`
-
-  * Returns the full product list (Edge or Node runtime depending on implementation).
-* `GET /api/products/[slug]`
-
-  * Returns a single product. Used by product detail pages.
-
-### Admin product endpoints (protected)
-
-> Admin endpoints typically require an admin header (`x-admin-key`) or a valid session cookie depending on your protection method.
-
-* `POST /api/admin/products`
-
-  * Create a new product (Node runtime if writing to `products.json`).
-* `PUT /api/admin/products/[id]`
-
-  * Update an existing product. This route can revalidate pages and the home path for ISR.
-* `DELETE /api/admin/products/[id]`
-
-  * Delete a product.
-
-### Auth endpoints
-
-* `POST /api/login`
-
-  * Body: `{ username, password }`
-  * Sets a session cookie and returns the role.
-* `POST /api/logout`
-
-  * Clears the session cookie.
+Login: `/login`
 
 ---
 
-## Authentication and authorization
+## 🧵 API Endpoints
 
-The demo implementation uses a simple session cookie approach:
+### Public
 
-* Login via `POST /api/login`. On success, a cookie is set (`session`) that contains session information (username, role). For production, sign and/or encrypt cookies.
-* Middleware (`src/middleware.ts`) will protect routes:
+| Method | Endpoint               | Description        |
+| ------ | ---------------------- | ------------------ |
+| GET    | `/api/products`        | Get all products   |
+| GET    | `/api/products/[slug]` | Get single product |
 
-  * Redirects unauthenticated users to `/login`.
-  * Restricts `/admin` to admin role.
-  * Optionally restricts `/dashboard` to authenticated users.
-  * Redirects logged-in users away from `/login` to their role-appropriate landing page.
+### Admin (Protected)
 
-**Notes for production**:
+| Method | Endpoint                   | Description                 |
+| ------ | -------------------------- | --------------------------- |
+| POST   | `/api/admin/products`      | Create product              |
+| PUT    | `/api/admin/products/[id]` | Update product + revalidate |
+| DELETE | `/api/admin/products/[id]` | Delete product              |
 
-* Use signed/encrypted cookies (HMAC or JWT) or a server-side session store.
-* Hash and salt passwords; do not store plaintext passwords.
+### Auth
+
+| Method | Endpoint      | Description        |
+| ------ | ------------- | ------------------ |
+| POST   | `/api/login`  | Login & set cookie |
+| POST   | `/api/logout` | Clear session      |
 
 ---
 
-## Admin dashboard (capabilities)
+## 🛡️ Authentication & Authorization
 
-Administrative features include:
+* Login sets a session cookie
+* Middleware protects routes:
 
-* Product listing with pagination and filters.
-* Create product modal (name, slug, price, inventory, category, description).
-* Edit product modal with field validation.
-* Delete confirmation for product removal.
+  * `/admin` → Admin only
+  * `/dashboard` → Logged-in users only
+  * Redirects logged-in users away from `/login`
+
+**Production Notes:**
+
+* Hash passwords (bcrypt)
+* Use signed/encrypted cookies or NextAuth
+
+---
+
+## 🧑‍💼 Admin Dashboard
+
+Includes:
+
+* Product table with listing, search, filters
+* Create/Edit/Delete product modals
 * Stats cards:
 
   * Total Products
   * Total Inventory
-  * Low Stock Items (inventory <= 5)
-* Revalidation: On update or delete, the server triggers revalidation for affected SSG pages (home and product pages) to demonstrate ISR on-demand.
+  * Low Stock Items
+* Triggers revalidation for ISR
 
 ---
 
-## Home page and product pages (SSG + ISR)
+## 🏠 Home & Product Pages (SSG + ISR)
 
-* Home page fetches product data at build time (SSG). Client-side search and filters are applied on the rendered page for instant results without additional server requests.
-* Product detail pages are pre-generated at build-time for performance. ISR is enabled to update pages periodically (example: every 60 seconds) or revalidated on-demand using `revalidatePath()` when product updates occur.
-* This approach combines the performance of static pages with the freshness of ISR for dynamic data such as price and inventory.
-
----
-
-## Data storage
-
-* Product data is stored in `src/data/products.json` for the purposes of this assignment. This simplifies running the project locally and meets assignment constraints.
-* For production use:
-
-  * Replace JSON storage with a database (MongoDB, PostgreSQL, Supabase) and update API routes accordingly.
-  * Add proper data validation, migrations, and backups.
+* Home page generated at build time
+* Fast client-side product filtering
+* Product pages regenerated automatically on update
 
 ---
 
-## Deployment guide
+## 📊 Data Storage
 
-This project is optimized for Vercel (recommended), but can also be deployed on other Node-compatible hosts.
+* JSON located at `/src/data/products.json`
+* Ideal for assignments & demo projects
 
-### Vercel
+To go production-ready:
 
-1. Push your repository to GitHub/GitLab.
-2. Import the project into Vercel.
-3. Set environment variables in Vercel dashboard (e.g., `AUTH_COOKIE_SECRET`, OAuth keys).
-4. Deploy.
+* Use DB (MongoDB/PostgreSQL)
+* Use Prisma with migrations & validation
 
-### Manual (Node server)
+---
 
-1. Build the project:
+## 🌍 Deployment
+
+### Deploy on Vercel (Recommended)
+
+1. Push repo to GitHub
+2. Import to Vercel
+3. Set environment variables
+4. Deploy
+
+### Manual (Node Server)
 
 ```bash
 npm run build
-```
-
-2. Start server:
-
-```bash
 npm start
 ```
 
-3. Ensure environment variables are set in your hosting environment.
+---
+
+## 🧪 Testing Suggestions
+
+* Unit tests: Products & Auth libraries
+* Integration: Login, Admin CRUD flows
+* E2E: Playwright or Cypress
 
 ---
 
-## Testing suggestions
+## 🚧 Future Improvements
 
-* Unit tests (recommended): Add tests for API endpoints and utility functions (auth helpers, products helpers). Use Jest or Vitest.
-* Integration tests: Verify login flow, admin CRUD, middleware protection.
-* End-to-end tests: Use Playwright or Cypress to test user journeys (login, create product, visit product page, ISR revalidation).
-
----
-
-## Future improvements and roadmap
-
-Planned enhancements and professional features:
-
-* Replace JSON storage with a production-grade database (MongoDB / PostgreSQL) and add Prisma for schema and migrations.
-* Implement secure authentication using NextAuth or server-side sessions, with proper password hashing (bcrypt) and OAuth providers.
-* Add unit and integration test suites (Vitest/Jest + Playwright).
-* Improve UI accessibility and internationalization (i18n).
-* Add image upload and CDN integration for product images.
-* Implement pagination on the public products list.
-* Add role-based permissions and auditing logs for admin actions.
+* Replace JSON with DB + Prisma
+* NextAuth + OAuth providers
+* File uploads for product images
+* Pagination & sorting
+* Internationalization (i18n)
+* Accessibility improvements
+* Activity logs for admin actions
 
 ---
 
-## Contribution guidelines
+## 🤝 Contribution
 
-Contributions are welcome. For major changes:
-
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature/your-feature`.
-3. Commit logically and push.
-4. Open a Pull Request with a clear description of changes.
-
-Ensure all changes are consistent with the project style and pass tests before requesting a review.
+1. Fork the repo
+2. Create branch: `git checkout -b feature/your-feature`
+3. Commit & push
+4. Open PR
 
 ---
 
-## License
+## 📄 License
 
-This repository is provided for educational and portfolio purposes. Add an appropriate license file (for example MIT) if you intend to publish:
-
-```
 MIT License
-```
 
 ---
 
-## Screenshots and demo (placeholders)
+## 🖼️ Screenshots & Demo
 
-Replace these placeholders with real screenshots or GIFs of your app in `./screenshots/`.
+Add actual screenshots to `/screenshots/`:
 
-* `screenshots/homepage.png` — Home page (product grid + search bar)
-* `screenshots/product-detail.png` — Product detail page
-* `screenshots/admin-dashboard.png` — Admin dashboard (stats + table)
-* `screenshots/create-product.png` — Create product modal
+* Homepage
+* Product Detail
+* Admin Dashboard
+* Create Product Modal
 
-Live demo: Add your live deployment URL here once available.
-
----
-
-## Troubleshooting & common issues
-
-* If you see errors about Node-only modules (e.g., `path` or `fs`) when using Edge runtime, add `export const runtime = "nodejs";` to routes that import `fs` or `path`.
-* Restart the dev server after changing runtime flags or adding middleware.
-* If cookies are not set in local development, check your browser devtools for blocked cookies or incorrect SameSite settings.
+> Add live demo URL here once deployed.
 
 ---
 
-## Contact
+## 🛠️ Troubleshooting
 
-Developed by Shubham Chandgude.
+* `fs` or `path` errors → Add `export const runtime = "nodejs"` to the route
+* Cookies not working → Check SameSite, domain, and devtools
+* Restart dev server after middleware changes
 
-email: `shubham826852@gmail.com`
 ---
+
+## 📬 Contact
+
+**Developer:** Shubham Chandgude
+Email: `shubham826852@gmail.com`
