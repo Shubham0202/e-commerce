@@ -1,28 +1,105 @@
-import { Package, Boxes, AlertTriangle } from "lucide-react";
+"use client";
 
-async function getProducts() {
-   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const res = await fetch(`${baseUrl}/api/products`, {
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error("Failed to load dashboard data");
-  return res.json();
+import { useEffect, useState } from "react";
+import { Package, Boxes, AlertTriangle, LogOut } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+interface Product {
+  id: string;
+  name: string;
+  inventory: number;
 }
 
-export default async function DashboardPage() {
-  const products: any[] = await getProducts();
+export default function DashboardPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", { method: "POST" });
+
+      if (!res.ok) {
+        toast.error("Logout failed!");
+        return;
+      }
+
+      toast.success("Logged out successfully!");
+      router.push("/admin/login");
+    } catch (err) {
+      toast.error("Something went wrong!");
+    }
+  };
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+        const res = await fetch(`${baseUrl}/api/products`, {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          toast.error("Failed to load products!");
+          throw new Error("Failed to load products");
+        }
+
+        const data = await res.json();
+        setProducts(data);
+      } catch {
+        toast.error("Something went wrong while fetching products!");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProducts();
+  }, []);
 
   const totalProducts = products.length;
   const totalInventory = products.reduce((sum, p) => sum + p.inventory, 0);
   const lowStock = products.filter((p) => p.inventory <= 5);
 
+  if (loading) {
+    return (
+      <main className="p-6 max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-black text-gray-900 dark:text-white">
+            Inventory Dashboard
+          </h1>
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg"
+          >
+            <LogOut className="w-4 h-4" /> Logout
+          </button>
+        </div>
+
+        <p className="text-gray-600 dark:text-gray-300">Loading products...</p>
+      </main>
+    );
+  }
+
   return (
     <main className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-8">
-        Inventory Dashboard
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-black text-gray-900 dark:text-white">
+          Inventory Dashboard
+        </h1>
 
-      {/* ✅ Updated KPI Cards with Lucide Icons */}
+        {/* ✅ Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg"
+        >
+          <LogOut className="w-4 h-4" /> Logout
+        </button>
+      </div>
+
+      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         <DashboardCard
           title="Total Products"
@@ -41,7 +118,7 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* ✅ Low Stock Table */}
+      {/* Low Stock Table */}
       <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
         Low Inventory Alerts
       </h2>
@@ -59,7 +136,10 @@ export default async function DashboardPage() {
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {lowStock.map((p) => (
-              <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+              <tr
+                key={p.id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+              >
                 <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
                   {p.name}
                 </td>
@@ -68,6 +148,7 @@ export default async function DashboardPage() {
                 </td>
               </tr>
             ))}
+
             {lowStock.length === 0 && (
               <tr>
                 <td className="p-4 text-sm text-center" colSpan={2}>
@@ -97,7 +178,9 @@ function DashboardCard({
         <p className="text-gray-600 dark:text-gray-300 font-medium">{title}</p>
         {icon}
       </div>
-      <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+      <p className="text-3xl font-bold text-gray-900 dark:text-white">
+        {value}
+      </p>
     </div>
   );
 }

@@ -1,25 +1,25 @@
-// src/lib/db.ts
 import mongoose from "mongoose";
 
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  "mongodb://localhost:27017/";
+const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGO_URI) {
-  throw new Error("❌ MONGO_URI is missing in environment variables");
+if (!MONGODB_URI) {
+  throw new Error("❌ MONGODB_URI is not defined in environment variables.");
 }
 
-let isConnected = false; // Track connection
+let isConnected = false; // Track connection state
 
 export async function connectDB() {
-  if (isConnected) return;
+  if (isConnected) {
+    // Already connected
+    return;
+  }
 
   try {
-    await mongoose.connect(MONGO_URI);
-    isConnected = true;
+    const db = await mongoose.connect(MONGODB_URI);
+    isConnected = db.connections[0].readyState === 1;
     console.log("✅ MongoDB Connected");
-  } catch (err) {
-    console.error("❌ MongoDB Connection Failed:", err);
-    throw err;
+  } catch (error) {
+    console.error("❌ MongoDB Connection Failed:", error);
+    throw error;
   }
 }

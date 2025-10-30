@@ -14,7 +14,7 @@ export default function Header() {
         {/* Logo */}
         <div className="flex items-center gap-2 cursor-pointer">
           <img
-            src="/logo.png"
+            src="/logo.jpeg"
             alt="E-Commerce"
             className="h-8 w-8 object-contain"
           />

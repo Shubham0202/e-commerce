@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { parseSessionValue, COOKIE_NAME } from "@/lib/auth";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const cookieValue = req.cookies.get(COOKIE_NAME)?.value;
