@@ -1,13 +1,32 @@
+// src/app/admin/page.tsx
 import AdminSidebar from "./components/AdminSidebar";
 import AdminHeader from "./components/AdminHeader";
 import StatsCards from "./components/StatsCards";
 import ProductsTable from "./components/ProductsTable";
 import { ProductsProvider } from "@/context/ProductsContext";
-import { readProducts } from "@/lib/products"; // ✅ Direct import, no API call
+import { getProducts, type ProductType } from "@/lib/products";
+
+// Convert MongoDB documents to plain objects
+function serializeProducts(products: ProductType[]) {
+  return products.map(product => ({
+    _id: product._id.toString(), // Convert ObjectId to string
+    name: product.name,
+    slug: product.slug,
+    description: product.description,
+    price: product.price,
+    category: product.category,
+    inventory: product.inventory,
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt
+  }));
+}
 
 export default async function AdminPage() {
-  // ✅ Direct data access instead of API call
-  const products = await readProducts();
+  // ✅ Direct data access using MongoDB function
+  const products = await getProducts();
+  
+  // ✅ Convert MongoDB objects to plain serializable objects
+  const serializedProducts = serializeProducts(products);
 
   return (
     <div className="flex w-full">
@@ -25,7 +44,7 @@ export default async function AdminPage() {
         </header>
 
         {/* ✅ Wrap everything inside ProductsProvider */}
-        <ProductsProvider initialProducts={products}>
+        <ProductsProvider initialProducts={serializedProducts}>
           <main className="max-w-7xl mx-auto px-6 py-6">
             {/* ✅ StatsCards now auto-updates because it reads from context */}
             <StatsCards />

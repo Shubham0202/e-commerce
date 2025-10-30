@@ -1,48 +1,48 @@
+// src/app/api/admin/products/[id]/route.ts
 import { NextResponse } from "next/server";
-import { readProducts, writeProducts } from "@/lib/products";
 import { revalidatePath } from "next/cache";
+import "@/lib/db"; // ensures MongoDB connection
+import { Product } from "@/lib/models/Product";
 
 export const dynamic = "force-dynamic";
 
 const ADMIN_KEY = process.env.ADMIN_KEY || "secret-key";
 
-export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
+// DELETE Product
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { params } = context;
-    const resolved = await params;
-    const productId = resolved.id;
-
     const key = req.headers.get("x-admin-key");
     if (key !== ADMIN_KEY) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // In production, return success but don't actually write
-    if (process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ 
-        success: true, 
-        message: "Delete simulated in production" 
+    const { id } = params;
+
+    // In production, simulate delete
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json({
+        success: true,
+        message: "Delete simulated in production",
       });
     }
 
-    const products = await readProducts();
-    const index = products.findIndex((p) => p.id === productId);
+    const deleted = await Product.findByIdAndDelete(id);
 
-    if (index === -1) {
+    if (!deleted) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const removed = products.splice(index, 1)[0];
-    await writeProducts(products);
-
     try {
       revalidatePath("/");
-      revalidatePath(`/products/${removed.slug}`);
+      revalidatePath(`/products/${deleted.slug}`);
     } catch {}
 
-    return NextResponse.json({ success: true, removed });
+    return NextResponse.json({ success: true, deleted });
   } catch (error) {
-    console.error('DELETE API error:', error);
+    console.error("DELETE API error:", error);
     return NextResponse.json(
       { error: "Delete operation failed" },
       { status: 500 }
@@ -50,52 +50,47 @@ export async function DELETE(req: Request, context: { params: Promise<{ id: stri
   }
 }
 
-export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
+// UPDATE Product
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { params } = context;
-    const resolved = await params;
-    const productId = resolved.id;
-
     const key = req.headers.get("x-admin-key");
     if (key !== ADMIN_KEY) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // In production, return success but don't actually write
-    if (process.env.NODE_ENV === 'production') {
-      const updates = await req.json();
+    const { id } = params;
+    const updates = await req.json();
+
+    // In production, simulate success
+    if (process.env.NODE_ENV === "production") {
       return NextResponse.json({
         ...updates,
-        id: productId,
-        lastUpdated: new Date().toISOString(),
-        message: "Update simulated in production"
+        _id: id,
+        updatedAt: new Date().toISOString(),
+        message: "Update simulated in production",
       });
     }
 
-    const updates = await req.json();
-    const products = await readProducts();
-    const index = products.findIndex((p) => p.id === productId);
+    const updatedProduct = await Product.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
 
-    if (index === -1) {
+    if (!updatedProduct) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    products[index] = {
-      ...products[index],
-      ...updates,
-      lastUpdated: new Date().toISOString(),
-    };
-
-    await writeProducts(products);
-
     try {
-      revalidatePath(`/products/${products[index].slug}`);
+      revalidatePath(`/products/${updatedProduct.slug}`);
       revalidatePath("/");
     } catch {}
 
-    return NextResponse.json(products[index]);
+    return NextResponse.json(updatedProduct);
   } catch (error) {
-    console.error('PUT API error:', error);
+    console.error("PUT API error:", error);
     return NextResponse.json(
       { error: "Update operation failed" },
       { status: 500 }

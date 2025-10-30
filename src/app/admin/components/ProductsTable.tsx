@@ -4,26 +4,27 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Pencil, Trash2, Plus, Check, X } from "lucide-react";
 import { toast } from "sonner";
-import { useProducts, Product } from "@/context/ProductsContext";
+import { useProducts } from "@/context/ProductsContext";
+import { ProductType } from "@/lib/products";
 
 const PAGE_SIZE = 10;
 
 export default function ProductsTable() {
-  const { products, setProducts, isSyncing, optimisticAdd, optimisticUpdate, optimisticDelete, refresh } = useProducts();
-  const [query, setQuery] = useState("");
+// Change this line in ProductsTable.tsx
+const { products, setProducts, isSyncing, setIsSyncing, addProduct, updateProduct, deleteProduct, refreshProducts } = useProducts();  const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<"name" | "price" | "inventory">("name");
   const [page, setPage] = useState(1);
 
   // modal / form states
   const [isAddOpen, setAddOpen] = useState(false);
   const [isEditOpen, setEditOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductType | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<ProductType | null>(null);
 
   // categories & form
   const [categories, setCategories] = useState<string[]>([]);
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [form, setForm] = useState<Partial<Product>>({
+  const [form, setForm] = useState<Partial<ProductType>>({
     name: "",
     slug: "",
     price: 0,
@@ -81,99 +82,103 @@ export default function ProductsTable() {
     toast.success(`Category "${name}" added`);
   }
 
-  // --- Optimistic CRUD handlers ---
-  async function handleAddSubmit(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    if (!form.name || !form.slug) {
-      toast.error("Name and slug are required");
-      return;
-    }
+  // --- CRUD handlers ---
+  // In your ProductsTable.tsx, replace the CRUD handlers with these:
 
-    // ensure slug unique locally
-    const slug = slugify(String(form.slug));
-    if (products.find((p) => p.slug === slug)) {
-      toast.error("Slug already exists");
-      return;
-    }
-
-    const payload: Partial<Product> = {
-      ...form,
-      slug,
-      price: Number(form.price || 0),
-      inventory: Number(form.inventory || 0),
-      category: form.category || "",
-    };
-
-    try {
-      await optimisticAdd(payload);
-      toast.success("Product added");
-      setAddOpen(false);
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Add failed");
-    }
+// --- CRUD handlers ---
+async function handleAddSubmit(e?: React.FormEvent) {
+  if (e) e.preventDefault();
+  if (!form.name || !form.slug) {
+    toast.error("Name and slug are required");
+    return;
   }
 
-  async function handleEditSubmit(e?: React.FormEvent) {
-    if (!editingProduct) return;
-    if (e) e.preventDefault();
-
-    const payload: Partial<Product> = {
-      ...form,
-      slug: slugify(String(form.slug)),
-      price: Number(form.price || 0),
-      inventory: Number(form.inventory || 0),
-      category: form.category || "",
-    };
-
-    // prevent duplicate slug
-    const conflict = products.find((p) => p.slug === payload.slug && p.id !== editingProduct.id);
-    if (conflict) {
-      toast.error("Slug already exists");
-      return;
-    }
-
-    try {
-      await optimisticUpdate(editingProduct.id, payload);
-      toast.success("Product updated");
-      setEditOpen(false);
-      setEditingProduct(null);
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Update failed");
-    }
+  // ensure slug unique locally
+  const slug = slugify(String(form.slug));
+  if (products.find((p) => p.slug === slug)) {
+    toast.error("Slug already exists");
+    return;
   }
 
-  async function handleDeleteConfirm() {
-    if (!deletingProduct) return;
+  const payload: Omit<ProductType, '_id' | 'createdAt' | 'updatedAt'> = {
+    name: form.name || "",
+    slug,
+    description: form.description || "",
+    price: Number(form.price || 0),
+    category: form.category || "",
+    inventory: Number(form.inventory || 0),
+  };
 
-    try {
-      await optimisticDelete(deletingProduct.id);
-      toast.success("Product deleted");
-      setDeletingProduct(null);
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Delete failed");
-    }
+  try {
+    await addProduct(payload);
+    toast.success("Product added");
+    setAddOpen(false);
+    setForm({ name: "", slug: "", price: 0, inventory: 0, category: "", description: "" });
+  } catch (err: any) {
+    console.error(err);
+    toast.error(err.message || "Add failed");
+  }
+}
+
+async function handleEditSubmit(e?: React.FormEvent) {
+  if (!editingProduct) return;
+  if (e) e.preventDefault();
+
+  const payload: Partial<ProductType> = {
+    ...form,
+    slug: slugify(String(form.slug)),
+    price: Number(form.price || 0),
+    inventory: Number(form.inventory || 0),
+    category: form.category || "",
+  };
+
+  // prevent duplicate slug
+  const conflict = products.find((p) => p.slug === payload.slug && p._id !== editingProduct._id);
+  if (conflict) {
+    toast.error("Slug already exists");
+    return;
   }
 
-  // quick manual refresh
-  async function handleRefresh() {
-    try {
-      await refresh();
-      toast.success("Refreshed");
-    } catch (err) {
-      toast.error("Refresh failed");
-    }
+  try {
+    await updateProduct(editingProduct.slug, payload);
+    toast.success("Product updated");
+    setEditOpen(false);
+    setEditingProduct(null);
+  } catch (err: any) {
+    console.error(err);
+    toast.error(err.message || "Update failed");
   }
+}
 
+async function handleDeleteConfirm() {
+  if (!deletingProduct) return;
+
+  try {
+    await deleteProduct(deletingProduct.slug);
+    toast.success("Product deleted");
+    setDeletingProduct(null);
+  } catch (err: any) {
+    console.error(err);
+    toast.error(err.message || "Delete failed");
+  }
+}
+
+// quick manual refresh
+async function handleRefresh() {
+  try {
+    await refreshProducts();
+    toast.success("Refreshed");
+  } catch (err) {
+    toast.error("Refresh failed");
+  }
+}
   // UI handlers
   function openAddModal() {
     setForm({ name: "", slug: "", price: 0, inventory: 0, category: categories[0] || "", description: "" });
     setAddOpen(true);
   }
 
-  function openEditModal(p: Product) {
+  function openEditModal(p: ProductType) {
     setEditingProduct(p);
     setForm({ ...p });
     setEditOpen(true);
@@ -248,7 +253,7 @@ export default function ProductsTable() {
               ))
             ) : (
               pageItems.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <tr key={p._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="px-4 py-3 font-medium">{p.name}</td>
                   <td className="px-4 py-3">₹{p.price}</td>
                   <td className="px-4 py-3">{p.inventory}</td>

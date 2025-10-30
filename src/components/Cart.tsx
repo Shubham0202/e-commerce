@@ -147,7 +147,7 @@ export default function Cart() {
                   <span className="font-medium text-text-primary-light dark:text-text-primary-dark">$0.00</span>
                 </div>
               </div>
-              <div className="h-[1px] bg-gray-200 dark:bg-gray-800" />
+              <div className="h-px bg-gray-200 dark:bg-gray-800" />
               <div className="flex justify-between items-center">
                 <span className="text-lg font-bold">Total Amount</span>
                 <span className="text-2xl font-black text-primary">${getTotal().toFixed(2)}</span>

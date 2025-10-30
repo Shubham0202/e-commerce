@@ -1,32 +1,51 @@
 // src/lib/products.ts
-import fs from "fs/promises";
-import path from "path";
+import { connectDB } from "./db";
+import { Product } from "./models/Product";
 
-export interface Product {
-  id: string;
+export interface ProductType {
+  _id: string;
   name: string;
   slug: string;
-  description: string;
+  description?: string;
   price: number;
   category: string;
   inventory: number;
-  lastUpdated: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-const PRODUCTS_PATH = path.join(process.cwd(), "src", "data", "products.json");
 
-export async function readProducts(): Promise<Product[]> {
-  const raw = await fs.readFile(PRODUCTS_PATH, "utf-8");
-  const products = JSON.parse(raw) as Product[];
-  return products;
+// ✅ Get all products
+export async function getProducts(): Promise<ProductType[]> {
+  await connectDB();
+  const products = await Product.find().lean();
+  return products as unknown as ProductType[];
 }
 
-export async function writeProducts(products: Product[]): Promise<void> {
-  // Only allow in development
-  if (process.env.NODE_ENV !== 'development') {
-    console.warn('Write operations disabled in production');
-    return;
-  }
-  
-  await fs.writeFile(PRODUCTS_PATH, JSON.stringify(products, null, 2), "utf-8");
+
+// ✅ Get single product by slug
+export async function getProductBySlug(slug: string): Promise<ProductType | null> {
+  await connectDB();
+  const product = await Product.findOne({ slug }).lean();
+  return product as ProductType | null;
+}
+
+// ✅ Add product (Admin)
+export async function addProduct(data: ProductType): Promise<ProductType> {
+  await connectDB();
+  const newProduct = await Product.create(data);
+  return newProduct.toObject() as ProductType;
+}
+
+// ✅ Update product (Admin)
+export async function updateProduct(slug: string, data: Partial<ProductType>) {
+  await connectDB();
+  const updated = await Product.findOneAndUpdate({ slug }, data, { new: true }).lean();
+  return updated as ProductType | null;
+}
+
+// ✅ Delete product (Admin)
+export async function deleteProduct(slug: string) {
+  await connectDB();
+  return Product.findOneAndDelete({ slug });
 }
