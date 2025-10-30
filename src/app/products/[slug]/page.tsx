@@ -1,28 +1,29 @@
 // src/app/products/[slug]/page.tsx
 import ProductCard from "@/components/ProductCard";
 import { notFound } from "next/navigation";
-import { readProducts } from "@/lib/products";
+import { getProducts, getProductBySlug } from "@/lib/products";
 
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const products = await readProducts();
+  const products = await getProducts();
   return products.map((product) => ({
     slug: product.slug,
   }));
 }
 
 async function getProduct(slug: string) {
-  const products = await readProducts();
-  return products.find((p) => p.slug === slug) || null;
+  const product = await getProductBySlug(slug);
+  return product;
 }
 
 export default async function ProductPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const product = await getProduct(params.slug);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     notFound();
