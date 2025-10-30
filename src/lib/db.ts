@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const MONGO_URI =
   process.env.MONGO_URI ||
-  "mongodb+srv://apartmentChatbot:PRYH1BHeXDW6Fkzy@cluster0.piiq8kc.mongodb.net/ecommerce_assigment?retryWrites=true&w=majority&appName=Cluster0";
+  "mongodb://localhost:27017/";
 
 if (!MONGO_URI) {
   throw new Error("❌ MONGO_URI is missing in environment variables");

@@ -1,7 +1,8 @@
 import { Package, Boxes, AlertTriangle } from "lucide-react";
 
 async function getProducts() {
-  const res = await fetch("http://localhost:3000/api/products", {
+   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const res = await fetch(`${baseUrl}/api/products`, {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to load dashboard data");
