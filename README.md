@@ -354,19 +354,10 @@ MIT License
 
 ## 🖼️ Screenshots & Demo
 
-<<<<<<< HEAD
 * `screenshots/homepage.png` — Home page (product grid + search bar)
 * `screenshots/add-product.png` — Product detail page
 * `screenshots/admin.png` — Admin dashboard (stats + table)
 * `screenshots/login.png` — Create product modal
-=======
-Add actual screenshots to `/screenshots/`:
-
-* Homepage
-* Product Detail
-* Admin Dashboard
-* Create Product Modal
->>>>>>> f73539491d05f4f57dbeee6d9f6777af38f1d709
 
 > Add live demo URL here once deployed.
 
