@@ -360,12 +360,10 @@ MIT License
 
 ## Screenshots and demo (placeholders)
 
-Replace these placeholders with real screenshots or GIFs of your app in `./screenshots/`.
-
 * `screenshots/homepage.png` — Home page (product grid + search bar)
-* `screenshots/product-detail.png` — Product detail page
-* `screenshots/admin-dashboard.png` — Admin dashboard (stats + table)
-* `screenshots/create-product.png` — Create product modal
+* `screenshots/add-product.png` — Product detail page
+* `screenshots/admin.png` — Admin dashboard (stats + table)
+* `screenshots/login.png` — Create product modal
 
 Live demo: Add your live deployment URL here once available.
 
