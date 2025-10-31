@@ -1,5 +1,5 @@
 // src/lib/products.ts
-import { connectDB } from "./db";
+import connectDB  from "./db";
 import { Product } from "./models/Product";
 
 export interface ProductType {
