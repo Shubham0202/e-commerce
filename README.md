@@ -354,10 +354,11 @@ MIT License
 
 ## 🖼️ Screenshots & Demo
 
-* `screenshots/homepage.png` — Home page (product grid + search bar)
-* `screenshots/add-product.png` — Product detail page
-* `screenshots/admin.png` — Admin dashboard (stats + table)
-* `screenshots/login.png` — Create product modal
+![Home Page Screenshot](./screenshots/homepage.png)
+![Home Page Screenshot](./screenshots/search.png)
+![Home Page Screenshot](./screenshots/login.png)
+![Home Page Screenshot](./screenshots/admin.png)
+![Home Page Screenshot](./screenshots/add-product.png)
 
 > Add live demo URL here once deployed.
 
