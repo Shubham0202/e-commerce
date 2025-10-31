@@ -360,7 +360,7 @@ MIT License
 ![Home Page Screenshot](./screenshots/admin.png)
 ![Home Page Screenshot](./screenshots/add-product.png)
 
-> Add live demo URL here once deployed.
+>https://e-commerce-umhg.onrender.com
 
 ---
 
