@@ -71,8 +71,8 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-4">Products</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              filteredProducts.map((product,i) => (
+                <ProductCard key={product.id+i} product={product} />
               ))
             ) : (
               <p className="text-gray-500 dark:text-gray-300">No products found.</p>
